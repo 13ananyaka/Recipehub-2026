@@ -1,0 +1,103 @@
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:latest
+    container_name: recipe-app-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: recipe_app
+    volumes:
+      - mongodb_data:/data/db
+
+  # User Service
+  user-service:
+    build: ./user-service
+    container_name: recipe-app-user-service
+    restart: unless-stopped
+    ports:
+      - "5001:5001"
+    environment:
+      - PORT=5001
+      - MONGO_URI=mongodb://admin:password@mongodb:27017/recipe_app?authSource=admin
+    depends_on:
+      - mongodb
+    volumes:
+      - ./user-service:/app
+      - /app/node_modules
+
+  # Recipe Service
+  recipe-service:
+    build: ./recipe-service
+    container_name: recipe-app-recipe-service
+    restart: unless-stopped
+    ports:
+      - "5002:5002"
+    environment:
+      - PORT=5002
+      - MONGO_URI=mongodb://admin:password@mongodb:27017/recipe_app?authSource=admin
+    depends_on:
+      - mongodb
+    volumes:
+      - ./recipe-service:/app
+      - /app/node_modules
+
+  # Notification Service
+  notification-service:
+    build: ./notification-service
+    container_name: recipe-app-notification-service
+    restart: unless-stopped
+    ports:
+      - "5004:5004"
+    environment:
+      - PORT=5004
+      - MONGO_URI=mongodb://admin:password@mongodb:27017/recipe_app?authSource=admin
+      - EMAIL_SERVICE=gmail
+      - EMAIL_USER=${EMAIL_USER}
+      - EMAIL_PASS=${EMAIL_PASS}
+    depends_on:
+      - mongodb
+    volumes:
+      - ./notification-service:/app
+      - /app/node_modules
+
+  # API Gateway
+  api-gateway:
+    build: ./api-gateway
+    container_name: recipe-app-api-gateway
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - USER_SERVICE_PORT=5001
+      - RECIPE_SERVICE_PORT=5002
+      - NOTIFICATION_SERVICE_PORT=5004
+    depends_on:
+      - user-service
+      - recipe-service
+      - notification-service
+    volumes:
+      - ./api-gateway:/app
+      - /app/node_modules
+
+  # Frontend
+  frontend:
+    build: ./frontend
+    container_name: recipe-app-frontend
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:3000/api
+    depends_on:
+      - api-gateway
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+volumes:
+  mongodb_data:
