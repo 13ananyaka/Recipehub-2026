@@ -166,41 +166,11 @@ The application will be available at:
 - Order Service: http://localhost:5003
 - Notification Service: http://localhost:5004
 
-#### Option 2: Local Development
+## Output
+<img width="1896" height="888" alt="Screenshot 2026-04-01 164402" src="https://github.com/user-attachments/assets/0cb2cd83-d50d-4660-9044-7415205a18e7" />
+<img width="1865" height="871" alt="Screenshot 2026-04-01 164500" src="https://github.com/user-attachments/assets/53441e77-19cf-406a-91f2-1f24d9cf5b44" />
+<img width="1663" height="891" alt="Screenshot 2026-04-01 164530" src="https://github.com/user-attachments/assets/27cb4ae1-d74b-4f59-9766-085b24ef839a" />
 
-1. Install dependencies for each service:
-```bash
-# Install dependencies for all services
-npm install --prefix user-service
-npm install --prefix recipe-service
-npm install --prefix order-service
-npm install --prefix notification-service
-npm install --prefix api-gateway
-npm install --prefix frontend
-```
-
-2. Start MongoDB (if not using Docker)
-
-3. Start each service in separate terminals:
-```bash
-# Terminal 1 - User Service
-cd user-service && npm run dev
-
-# Terminal 2 - Recipe Service
-cd recipe-service && npm run dev
-
-# Terminal 3 - Order Service
-cd order-service && npm run dev
-
-# Terminal 4 - Notification Service
-cd notification-service && npm run dev
-
-# Terminal 5 - API Gateway
-cd api-gateway && npm run dev
-
-# Terminal 6 - Frontend
-cd frontend && npm run dev
-```
 
 ## API Endpoints
 
